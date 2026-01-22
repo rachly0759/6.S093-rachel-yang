@@ -26,7 +26,7 @@ model_name = OPENROUTER_MODEL or "openai/gpt-4o-mini"
 def summarize_content(content: str) -> str:
     # Limit to ~500 tokens of input (roughly 2000 chars to be safe)
     MAX_INPUT_CHARS = 2000
-    MAX_OUTPUT_TOKENS_SUMMARY = 100
+    MAX_OUTPUT_TOKENS_SUMMARY = 80  # Reduced from 100
 
     short_content = content[:MAX_INPUT_CHARS]
 
@@ -45,7 +45,7 @@ def summarize_content(content: str) -> str:
 
 # Generate structured post
 def generate_post(content: str) -> SocialMediaPost:
-    MAX_OUTPUT_TOKENS_POST = 300
+    MAX_OUTPUT_TOKENS_POST = 200  # Reduced from 300 to fit within your budget
 
     # Step 1: summarize (this handles the token limit)
     summary = summarize_content(content)

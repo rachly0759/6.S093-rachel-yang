@@ -17,7 +17,7 @@ mastodon = Mastodon(
 # ------------------------
 # Function to post content
 # ------------------------
-def post_to_mastodon(post: SocialMediaPost, dry_run: bool = True):
+def post_to_mastodon(post: SocialMediaPost, image_path: str | None = None, dry_run: bool = True):
     """
     Posts a SocialMediaPost to Mastodon.
     If dry_run=True, just prints what would be posted.
@@ -31,14 +31,36 @@ def post_to_mastodon(post: SocialMediaPost, dry_run: bool = True):
         print("=== DRY RUN ===")
         print("Caption + Hashtags:")
         print(content)
-        print("Image prompt (optional, not posted):", post.image_prompt)
+
+        if image_path:
+            print("Image path:", image_path)
+            print("Image prompt (optional, not posted):", post.image_prompt)
+        else:
+            print("No image provided")
+        
         print("================")
         return
 
     try:
-        mastodon.status_post(content)
+        media_ids = None
+
+        # Upload image if provided
+        if image_path:
+            media = mastodon.media_post(
+                image_path,
+                # description=post.image_prompt  # alt-text (good practice)
+            )
+            media_ids = [media["id"]]
+
+        # Create status
+        mastodon.status_post(
+            status=content,
+            media_ids=media_ids
+        )
+
+        # FIX: Fixed emoji encoding
         print("✅ Successfully posted to Mastodon!")
+
     except Exception as e:
+        # FIX: Fixed emoji encoding
         print("❌ Failed to post to Mastodon:", e)
-
-
